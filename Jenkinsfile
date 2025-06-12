@@ -7,11 +7,11 @@ pipeline{
     stages{
         stage("build"){
             steps{
-		echo "--------build started--------"
+                echo "--------build started--------"
 
                 sh "mvn clean deploy -Dmavem.test.skip=true"
-		
-		echo "--------build completed--------"
+
+                echo "--------build completed--------"
             }
         }
        stage("test"){
@@ -24,6 +24,7 @@ pipeline{
             }
         }
 
+
         stage("SonarQube Analysis"){
             environment{
                 scannerHome= tool "saidemy-sonar-scanner"
@@ -34,6 +35,17 @@ pipeline{
                 }
             }
         }
+        stage("Quality Gate"){
+            steps{
+                script{
+                    timeout(time: 1, unit: 'HOURS'){
+                        def qg = waitForQualityGate()
+                        if (qg.status != 'OK'){
+                            error "Pipeline aborted due to quality gate failure: ${qg.status}"
+                        }
+                    }
+                }
+            }
+        }
     }
 }
-
