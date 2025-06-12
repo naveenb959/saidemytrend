@@ -3,6 +3,7 @@ pipeline{
     environment{
         PATH="/opt/maven/bin:$PATH"
     }
+
     stages{
         stage("build"){
             stpes{
@@ -11,7 +12,7 @@ pipeline{
         }
         stage("SonarQube Analysis"){
             environment{
-                scannerHome= tool "saidemy-sonar-server"
+                scannerHome= tool "saidemy-sonar-scanner"
             }
             steps{
                 withSonarQubeEnv("saidemy-sonarqube-server"){
